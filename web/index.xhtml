@@ -1,12 +1,47 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <title>Facelet Title</title>
     </h:head>
     <h:body>
-        Hello from Facelets
+        <h:form>
+            <h:panelGrid columns="2">
+                Data Cadastro:
+                <h:inputText value="#{ocorrenciaMB.ocorrencia.data_cadastro}"/>
+                Solicitante:
+                <h:inputText value="#{ocorrenciaMB.ocorrencia.nome_solicitante}"/>
+                Tipo Ocorrência:
+                <h:inputText value="#{ocorrenciaMB.ocorrencia.tipo_ocorrencia}"/>
+                <h:commandButton value="Salvar" action="#{ocorrenciaMB.salvar()}"/>            
+                <h:commandButton value="Novo" action="#{ocorrenciaMB.novo()}"/>            
+            </h:panelGrid>
+        </h:form>
+        <h:form>
+            <h:dataTable var="ocorrencia" value="#{ocorrenciaMB.lista}">
+                <h:column>
+                    <f:facet name="header">ID</f:facet>
+                        #{ocorrencia.id_ocorrencia}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Data Cadastro</f:facet>
+                        #{ocorrencia.data_cadastro}
+                </h:column>                
+                <h:column>
+                    <f:facet name="header">Solicitante</f:facet>
+                        #{ocorrencia.nome_solicitante}
+                </h:column>                
+                <h:column>
+                    <h:commandLink value="Editar" action="#{ocorrenciaMB.editar(ocorrencia)}"/>
+                </h:column>
+                <h:column>
+                    <h:commandLink value="Excluir" action="#{ocorrenciaMB.excluir(ocorrencia)}"
+                                   onclick = "return confirm('Confirma a exclusão?')" />
+                </h:column>                
+            </h:dataTable>                
+        </h:form>
     </h:body>
 </html>
 
