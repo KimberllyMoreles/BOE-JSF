@@ -9,11 +9,10 @@ public class DAO<T> {
 
     private EntityManager em;
     
-    public DAO(String pu) {
+    public DAO() {
         if (this.em == null) {
-            this.em = Persistence.createEntityManagerFactory(pu).createEntityManager();
+            this.em = Persistence.createEntityManagerFactory("BOEPU").createEntityManager();       
         }
-
     }
    
     public void insert(T object){  

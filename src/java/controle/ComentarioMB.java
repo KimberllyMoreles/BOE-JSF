@@ -18,7 +18,7 @@ public class ComentarioMB implements Serializable{
     
     @PostConstruct
     public void inicializar(){
-        comentarioDAO = new DAO<>("BOEPU");
+        comentarioDAO = new DAO<>();
         comentario = new Comentario();
         this.listar();        
     }

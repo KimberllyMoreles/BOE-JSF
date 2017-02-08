@@ -4,44 +4,176 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
-        <title>Facelet Title</title>
+        <title>Boletim de ocorrências estudantis</title>
+        <script src="../js/jquery-1.9.1.js"></script>
+        <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet"></link>
+        <link href="../bootstrap/css/sb-admin.css" rel="stylesheet"></link>
+        <link href="../bootstrap/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"></link>
+        <script src="../bootstrap/js/jquery.js"></script>
+        <script src="../bootstrap/js/bootstrap.min.js"></script>
+
+        <script>
+            $('#myModal').on('shown.bs.modal', function () {
+                $('#myInput').focus()
+            })
+        </script>
+
+        <style>
+            body
+            {
+                color:#fff;
+                width: 85%;
+                margin: 0 auto;
+
+            }
+
+            .wd5
+            {
+                width: 5%;
+            }
+
+            .wd20{
+                width: 20%
+            }
+
+            .wd35{
+                width: 35%
+            }
+
+            .wd25{
+                width: 25%
+            }
+        </style>
     </h:head>
     <h:body>
-        <h:form>
-            <h:panelGrid columns="2">
-                Data Cadastro:
-                <h:inputText value="#{ocorrenciaMB.ocorrencia.data_cadastro}"/>
-                Solicitante:
-                <h:inputText value="#{ocorrenciaMB.ocorrencia.nome_solicitante}"/>
-                Tipo Ocorrência:
-                <h:inputText value="#{ocorrenciaMB.ocorrencia.tipo_ocorrencia}"/>
-                <h:commandButton value="Salvar" action="#{ocorrenciaMB.salvar()}"/>            
-                <h:commandButton value="Novo" action="#{ocorrenciaMB.novo()}"/>            
-            </h:panelGrid>
-        </h:form>
-        <h:form>
-            <h:dataTable var="ocorrencia" value="#{ocorrenciaMB.lista}">
-                <h:column>
-                    <f:facet name="header">ID</f:facet>
-                        #{ocorrencia.id_ocorrencia}
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Data Cadastro</f:facet>
-                        #{ocorrencia.data_cadastro}
-                </h:column>                
-                <h:column>
-                    <f:facet name="header">Solicitante</f:facet>
-                        #{ocorrencia.nome_solicitante}
-                </h:column>                
-                <h:column>
-                    <h:commandLink value="Editar" action="#{ocorrenciaMB.editar(ocorrencia)}"/>
-                </h:column>
-                <h:column>
-                    <h:commandLink value="Excluir" action="#{ocorrenciaMB.excluir(ocorrencia)}"
-                                   onclick = "return confirm('Confirma a exclusão?')" />
-                </h:column>                
-            </h:dataTable>                
-        </h:form>
+        <div id="page-wrapper">
+            <div class="container-fluid">                    
+                <h:form>
+                    <div class="row">
+                        <div class="col-lg-10">
+                            <h1 class="page-header">
+                                Cadastro de ocorrência
+                            </h1>
+                        </div>
+                        <div class="col-lg-2">
+                            <div class="form-group pull-right">
+                                <h:commandButton value="Nova ocorrência" action="#{ocorrenciaMB.novo()}" class="btn btn-primary"/>    
+                            </div>    
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-lg-2">
+                            <label>Data Cadastro</label>
+                            <h:inputText value="#{ocorrenciaMB.ocorrencia.dataCadastro}"  class="form-control">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:inputText>
+                        </div>
+                        <div class="form-group col-lg-6">
+                            <label>Solicitante:</label>
+                            <h:inputText value="#{ocorrenciaMB.ocorrencia.nomeSolicitante}" class="form-control"/>
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <label>Tipo Ocorrência:</label>
+                            <h:inputText value="#{ocorrenciaMB.ocorrencia.tipoOcorrencia}" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group pull-right">
+                        <h:commandButton value="Salvar" action="#{ocorrenciaMB.salvar()}" class="btn btn-success"/>    
+                    </div>
+                    <h:panelGroup rendered="#{ocorrenciaMB.exibirComentarios}" class="col-lg-12">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <h3 class="page-header">
+                                    Comentarios
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-lg-2">
+                                <label>Data Cadastro</label>
+                                <h:inputText value="#{ocorrenciaMB.comentario.dataCadastro}" class="form-control">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:inputText>
+                            </div>
+                            <div class="form-group col-lg-4">
+                                <label>Nome do aluno</label>
+                                <h:inputText value="#{ocorrenciaMB.comentario.nomeAluno}" class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-lg-12">
+                                <label>Comentario:</label>
+                                <h:inputTextarea value="#{ocorrenciaMB.comentario.comentario}" class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="form-group pull-right">
+                            <h:commandButton value="Salvar" action="#{ocorrenciaMB.salvarComentario()}" class="btn btn-success"/>    
+                        </div>
+                        <div class="panel-body">
+                            <h:dataTable var="comentario" value="#{ocorrenciaMB.comentarios}" class="table">
+                                <h:column>
+                                    <f:facet name="header">ID</f:facet>
+                                        #{comentario.idComentario}
+                                </h:column>
+                                <h:column>
+                                    <f:facet name="header">Data Cadastro</f:facet>
+                                    <h:outputText value="#{comentario.dataCadastro}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+
+                                </h:column>                
+                                <h:column>
+                                    <f:facet name="header">Aluno</f:facet>
+                                        #{comentario.nomeAluno}
+                                </h:column> 
+                                <h:column>
+                                    <f:facet name="header">Comentario</f:facet>
+                                        #{comentario.comentario}
+                                </h:column> 
+                            </h:dataTable> 
+                        </div>
+                    </h:panelGroup>
+                </h:form>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">
+                            Listagem de ocorrências
+                        </h1>
+                    </div>
+                </div>
+                <h:form>
+                    <div class="panel-body">
+                        <h:dataTable var="ocorrencia" value="#{ocorrenciaMB.ocorrencias}" class="table">
+                            <h:column class="wd5">
+                                <f:facet name="header">ID</f:facet>
+                                    #{ocorrencia.idOcorrencia}
+                            </h:column>
+                            <h:column class="wd20">
+                                <f:facet name="header">Data Cadastro</f:facet>
+                                <h:outputText value="#{ocorrencia.dataCadastro}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </h:column>                
+                            <h:column class="wd35">
+                                <f:facet name="header">Solicitante</f:facet>
+                                    #{ocorrencia.nomeSolicitante}
+                            </h:column>
+                            <h:column class="wd25">
+                                <f:facet name="header">Tipo de ocorrência</f:facet>
+                                    #{ocorrencia.tipoOcorrencia}
+                            </h:column>   
+                            <h:column class="wd5">
+                                <h:commandLink value="Editar" action="#{ocorrenciaMB.editar(ocorrencia)}" class="btn btn-success"/>
+                            </h:column>
+                            <h:column class="wd5">
+                                <h:commandLink value="Excluir" action="#{ocorrenciaMB.excluir(ocorrencia)}"
+                                               onclick = "return confirm('Confirma a exclusão?')" class="btn btn-danger"/>
+                            </h:column>                
+                        </h:dataTable>  
+                    </div>
+                </h:form>
+            </div>
+        </div>
     </h:body>
 </html>
 

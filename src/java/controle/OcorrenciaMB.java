@@ -1,74 +1,151 @@
 package controle;
+
 import dao.DAO;
 import java.io.Serializable;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import modelo.Comentario;
 import modelo.Ocorrencia;
 
-public class OcorrenciaMB implements Serializable{
-    
+@ManagedBean
+@ViewScoped
+public class OcorrenciaMB implements Serializable
+{
     Ocorrencia ocorrencia;
+    Comentario comentario;
     DAO<Ocorrencia> ocorrenciaDAO;
-    List<Ocorrencia> lista;
-        
-    public OcorrenciaMB() {
+    DAO<Comentario> comentarioDAO;
+    List<Ocorrencia> ocorrencias;
+    List<Comentario> comentarios;
+    boolean exibirComentarios = false;
 
+    public OcorrenciaMB()
+    {
     }
-    
+
     @PostConstruct
-    public void inicializar(){
-        ocorrenciaDAO = new DAO<>("BOEPU");
+    public void inicializar()
+    {
+        ocorrenciaDAO = new DAO<>();
+        comentarioDAO = new DAO<>();
         ocorrencia = new Ocorrencia();
-        this.listar();        
+        comentario = new Comentario();
+        this.listar();
     }
-        
+
     @PreDestroy
-    public void fechar(){
+    public void fechar()
+    {
         ocorrenciaDAO.close();
     }
- 
-    public Ocorrencia getOcorrencia() { 
+    
+    public boolean getExibirComentarios()
+    {
+        return exibirComentarios;
+    }
+
+    public Ocorrencia getOcorrencia()
+    {
         return ocorrencia;
     }
 
-    public void setOcorrencia(Ocorrencia ocorrencia) {
+    public void setOcorrencia(Ocorrencia ocorrencia)
+    {
         this.ocorrencia = ocorrencia;
-    }    
-
-    public List<Ocorrencia> getLista() {
-        return lista;
     }
 
-    public void setLista(List<Ocorrencia> lista) {
-        this.lista = lista;
-    }        
-    
-    public void novo(){
-        ocorrencia = new Ocorrencia();
+    public List<Ocorrencia> getOcorrencias()
+    {
+        return ocorrencias;
     }
-    
-    public void salvar() {
-        if(ocorrencia.getIdOcorrencia() == null)
+
+    public void setOcorrencias(List<Ocorrencia> ocorrencias)
+    {
+        this.ocorrencias = ocorrencias;
+    }
+
+    public void novo()
+    {
+        this.ocorrencia = new Ocorrencia();
+        this.comentario = new Comentario();         
+            this.exibirComentarios = false;
+    }
+
+    public void salvar()
+    {
+        if (ocorrencia.getIdOcorrencia() == null)
+        {
             ocorrenciaDAO.insert(ocorrencia);
-        else
+            this.comentario.setIdOcorrencia(ocorrencia);
+            this.comentarios = (List) ocorrencia.getComentarioCollection();
+            this.exibirComentarios = true;
+        } else
+        {
             ocorrenciaDAO.update(ocorrencia);
+        }
         this.listar();
     }
-    
-    public void editar(Ocorrencia ocorrencia){
-        this.ocorrencia = ocorrencia;        
+
+    public void editar(Ocorrencia ocorrencia)
+    {
+        this.ocorrencia = ocorrencia;   
+        this.comentario.setIdOcorrencia(ocorrencia);
+        this.comentarios = (List) ocorrencia.getComentarioCollection();
+        this.exibirComentarios = true;
     }
-    
-    public void excluir(Ocorrencia ocorrencia){
-        ocorrenciaDAO.delete(ocorrencia);        
+
+    public void excluir(Ocorrencia ocorrencia)
+    {
+        ocorrenciaDAO.delete(ocorrencia);
         this.listar();
         this.novo();
     }
 
-    public void listar(){
-        lista = ocorrenciaDAO.getAll(Ocorrencia.class, "Ocorrencia.findAll");
+    public void listar()
+    {
+        ocorrencias = ocorrenciaDAO.getAll(Ocorrencia.class, "Ocorrencia.findAll");
+    }
+    
+    
+    /// --------------- COMENTARIOS
+     public Comentario getComentario()
+    {
+        return comentario;
+    }
+
+    public void setComentario(Comentario comentario)
+    {
+        this.comentario = comentario;
+    }
+
+    public List<Comentario> getComentarios()
+    {
+        return comentarios;
+    }
+
+    public void setComentarios(List<Comentario> comentarios)
+    {
+        this.comentarios = comentarios;
+    }
+
+    public void novoComentario()
+    {
+        this.comentario = new Comentario();        
+        this.comentario.setIdOcorrencia(ocorrencia);
+    }
+
+    public void salvarComentario()
+    {
+        comentarioDAO.insert(comentario);
+        this.novoComentario();
+        this.listarComentarios();
+    }
+
+    public void listarComentarios()
+    {
+        comentarios = comentarioDAO.getAll(Comentario.class, "Comentario.findAll");
     }
 }
-
-
